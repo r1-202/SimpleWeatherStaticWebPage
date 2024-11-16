@@ -4,14 +4,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <title>Vanilla JavaScript App</title>
+  <title>City Weather Lookup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: auto;
+      text-align: center;
+    }
+
+    input,
+    button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+    }
+
+    #output {
+      margin-top: 20px;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 
 <body>
-  <main>
-    <h1>Vanilla JavaScript App</h1>
-  </main>
+  <div class="container">
+    <h1>City Weather Lookup</h1>
+    <input type="text" id="cityInput" placeholder="Enter city name">
+    <button onclick="fetchCityData()">Get Weather</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    async function fetchCityData() {
+      const cityName = document.getElementById('cityInput').value;
+      if (!cityName) {
+        alert('Please enter a city name.');
+        return;
+      }
+      try {
+        const response = await fetch(`https://simpleweatherwebservice-kassemhmady.azurewebsites.net/getweather/${encodeURIComponent(cityName)}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+
+        // Display the relevant weather information
+        const output = `
+          City: ${data.city_name}
+          Country: ${data.country_ID}
+          Weather: ${data.weather_description}
+          Temperature: ${data.temperature} °C
+        `;
+        document.getElementById('output').innerText = output;
+
+      } catch (error) {
+        document.getElementById('output').innerText = `Error: ${error.message}`;
+      }
+    }
+  </script>
 </body>
 
 </html>
